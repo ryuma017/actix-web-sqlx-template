@@ -48,14 +48,14 @@ pub struct ApplicationSettings {
 }
 
 pub enum Environment {
-    Develop,
+    Local,
     Production,
 }
 
 impl Environment {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Environment::Develop => "develop",
+            Environment::Local => "local",
             Environment::Production => "production",
         }
     }
@@ -66,10 +66,10 @@ impl TryFrom<String> for Environment {
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         match value.to_lowercase().as_str() {
-            "develop" => Ok(Self::Develop),
+            "local" => Ok(Self::Local),
             "production" => Ok(Self::Production),
             other => Err(format!(
-                "{} is not a supported environment. Use either `develop` or `production`.",
+                "{} is not a supported environment. Use either `local` or `production`.",
                 other
             )),
         }
@@ -81,7 +81,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let configuration_directory = base_path.join("configuration");
 
     let environment: Environment = std::env::var("APP_ENVIRONMENT")
-        .unwrap_or_else(|_| "develop".into())
+        .unwrap_or_else(|_| "local".into())
         .try_into()
         .expect("Failed to parse `APP_ENVIRONMENT`.");
 
